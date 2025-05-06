@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: nginx-deployment
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: k3s-cluster1
+            url: https://10.21.64.43:6443
+            path: overlays/k3s-cluster1
+          - cluster: k3s-cluster2
+            url: https://10.21.64.44:6443
+            path: overlays/k3s-cluster2
+          - cluster: k3s-cluster3
+            url: https://10.21.64.45:6443
+            path: overlays/k3s-cluster3
+  template:
+    metadata:
+      name: nginx-{{cluster}}
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/your-org/gitops-repo
+        targetRevision: HEAD
+        path: nginx/{{path}}
+        kustomize:
+          namePrefix: "{{cluster}}-"
+      destination:
+        server: "{{url}}"
+        namespace: nginx
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
