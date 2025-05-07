@@ -22,7 +22,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/your-org/gitops-repo
+        repoURL: https://github.com/deegbo/argo-kustomize.git
         targetRevision: HEAD
         path: nginx/{{path}}
         kustomize:
